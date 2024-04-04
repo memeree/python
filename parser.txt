@@ -1,0 +1,24 @@
+import xml.etree.ElementTree as ET
+
+def extract_sections(xml_file, start_tag, end_tag):
+    try:
+        tree = ET.parse(xml_file)
+        root = tree.getroot()
+
+        # Find all elements between the specified start and end tags
+        sections = root.findall(f".//{start_tag}/following-sibling::*[following-sibling::{end_tag}]")
+
+        # Write each section to a separate file
+        for i, section in enumerate(sections, start=1):
+            with open(f"section_{i}.xml", "w") as output_file:
+                output_file.write(ET.tostring(section, encoding="unicode"))
+
+        print(f"Extracted {len(sections)} sections to separate files.")
+    except ET.ParseError:
+        print("Error parsing the XML file.")
+
+# Example usage
+xml_file_path = "your_xml_file.xml"
+start_tag = "start_tag_name"
+end_tag = "end_tag_name"
+extract_sections(xml_file_path, start_tag, end_tag)
